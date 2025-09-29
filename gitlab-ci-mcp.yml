@@ -1,0 +1,41 @@
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+
+image: google/cloud-sdk:latest
+
+before_script:
+  - echo "CI_PROJECT_ID $CI_PROJECT_ID"
+  - echo "CI_MERGE_REQUEST_IID $CI_MERGE_REQUEST_IID"
+
+  - echo "$GOOGLE_CLOUD_CREDENTIALS" > gcp-key.json
+  - gcloud auth activate-service-account --key-file=gcp-key.json
+  - export ACCESS_TOKEN=$(gcloud auth print-access-token)
+  - export GITLAB_TOKEN=$(echo $GITLAB_TOKEN)
+  - export GITLAB_MCP_CLOUD_RUN_URL=$(echo $GITLAB_MCP_CLOUD_RUN_URL)
+  - mkdir -p .gemini
+  - |
+    echo '{
+      "mcpServers": {
+        "GitLab": {
+          "httpUrl": "'"$GITLAB_MCP_CLOUD_RUN_URL"'",
+          "headers": {
+            "Private-Token": "'"$GITLAB_TOKEN"'",
+            "Content-Type": "application/json",
+            "X-Serverless-Authorization": "Bearer '"$ACCESS_TOKEN"'"
+          }
+        }
+      }
+    }' > .gemini/settings.json
+    
+  - apt-get install -y unzip
+  - curl -o- https://fnm.vercel.app/install | bash
+  - source /root/.bashrc
+  - fnm install 22
+  - npm install -g @google/gemini-cli
+
+review-job:
+  script:
+    - export GEMINI_API_KEY=$(echo $GEMINI_API_KEY)
+
+    - gemini -y -p "review changes in merge request $CI_MERGE_REQUEST_IID in project $CI_PROJECT_ID and add comment in markdown format with following information detailed summary of changes, impact of new changes, readiness to merge, test coverage, changes highlights, file by file with filepaths and changes changelog and activity sections with info about who and when opened merge request and branch info, also how many days, hours, minutes merge request was opened"

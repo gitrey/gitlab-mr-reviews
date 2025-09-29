@@ -1,0 +1,27 @@
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "web"
+
+image: node:22
+
+before_script:
+  - npm install -g @google/gemini-cli
+
+
+build-job:
+  stage: build
+  script:
+    - export PROJECT_ID=$(echo $PROJECT_ID)
+    - export LOCATION=$(echo $LOCATION)
+    - export GEMINI_API_KEY=$(echo $GEMINI_API_KEY)
+
+    - echo "Comments Coverage Review\n"
+    - gemini -p 'review menu-service java code and check that all classes are properly documented and return findings as text in Markdown format to the console so it can be piped to the file' -y >> comments-report.md
+
+    - echo "Tests Coverage Review\n"
+    - gemini -p 'review menu-service java code and check that all classes and methods have test coverage and return findings as text in Markdown format to the console so it can be piped to the file' -y >> tests-report.md
+  artifacts:
+    paths:
+      - comments-report.md
+      - tests-report.md
+    when: always
