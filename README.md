@@ -92,7 +92,6 @@ workflow:
 review-job:
   script:
     # Configuration for MCP server (e.g., setting up .gemini/settings.json) would go here
-    - export GEMINI_API_KEY=$(echo $GEMINI_API_KEY)
     - gemini -y -p "review changes in merge request $CI_MERGE_REQUEST_IID in project $CI_PROJECT_ID and add comment in markdown format..."
 ```
 
@@ -126,9 +125,24 @@ build-job:
 
 ## Environment Variables
 
-To use the Gemini CLI in your GitLab CI/CD pipelines, you need to configure the following environment variable:
+To use the Gemini CLI in your GitLab CI/CD pipelines, you need to configure the following environment variables:
 
--   **`GEMINI_API_KEY`**: Your Gemini API key. This needs to be configured in your GitLab repository's CI/CD settings under "Variables". **For Enterprise users, you should configure `GOOGLE_API_KEY` instead. [Details here](https://github.com/google-gemini/gemini-cli/tree/main?tab=readme-ov-file#option-3-vertex-ai).**
+## Use Vertex AI (for Enterprise users)
+
+*   `GOOGLE_API_KEY`: Your Google Cloud API key. This needs to be configured in your GitLab repository's CI/CD settings under "Variables". **For Enterprise users, configure GOOGLE_API_KEY. [Details here](https://github.com/google-gemini/gemini-cli/tree/main?tab=readme-ov-file#option-3-vertex-ai).**
+*   `GOOGLE_GENAI_USE_VERTEXAI`: Set to `true` to use Vertex AI for code reviews. This needs to be configured in your GitLab repository's CI/CD settings under "Variables". [Details here.](https://github.com/google-gemini/gemini-cli/blob/main/docs/get-started/authentication.md#non-interactive-mode--headless-environments)
+
+## Use Gemini API Key
+
+*   `GEMINI_API_KEY`: Your Gemini API key. This needs to be configured in your GitLab repository's CI/CD settings under "Variables". **For Enterprise users, configure GOOGLE_API_KEY instead.**
+
+## GitLab MCP Server on Cloud Run
+
+*  `GITLAB_TOKEN`: A GitLab Personal Access Token (PAT) with `api` scope. This token is used by the MCP server to interact with the GitLab API. It should be configured in your GitLab repository's CI/CD settings under "Variables". [How to create a PAT](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html).
+
+* `GITLAB_MCP_CLOUD_RUN_URL`: The URL of your deployed MCP server on Cloud Run. This should be configured in your GitLab repository's CI/CD settings under "Variables".
+
+* `GOOGLE_CLOUD_CREDENTIALS`: The JSON key for a Google Cloud service account with permissions to invoke the Cloud Run service. This should be configured in your GitLab repository's CI/CD settings under "Variables". [How to create a service account and download its key](https://cloud.google.com/iam/docs/creating-managing-service-accounts).
 
 ## Sample Review
 

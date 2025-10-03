@@ -36,6 +36,10 @@ before_script:
 
 review-job:
   script:
-    - export GEMINI_API_KEY=$(echo $GEMINI_API_KEY)
+    # Using Vertex AI option - Enterprise users
+    - export GOOGLE_API_KEY=$(echo $GOOGLE_API_KEY)
+    - export GOOGLE_GENAI_USE_VERTEXAI=true
+    # Using Gemini option
+    # - export GEMINI_API_KEY=$(echo $GEMINI_API_KEY)  
 
     - gemini -y -p "review changes in merge request $CI_MERGE_REQUEST_IID in project $CI_PROJECT_ID and add comment in markdown format with following information detailed summary of changes, impact of new changes, readiness to merge, test coverage, changes highlights, file by file with filepaths and changes changelog and activity sections with info about who and when opened merge request and branch info, also how many days, hours, minutes merge request was opened"
