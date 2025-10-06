@@ -38,6 +38,8 @@ Instead of interacting with the GitLab API directly from the CI runner, the `@go
 -   **Scalability**: The serverless nature of Cloud Run automatically handles a high volume of concurrent MRs.
 -   **Extensibility**: The backend can be easily extended with more sophisticated features, such as custom rules or integrations with other tools like Jira.
 
+Cloud Run Deployment Guide: [Deploying MCP Server on Cloud Run](https://gitlab.com/gitrey/gitlab-mcp/#cloud-run-deployment)
+
 ---
 
 ### Architecture B: Self-Contained MCP Service in Runner
