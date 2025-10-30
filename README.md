@@ -8,6 +8,8 @@ This repository provides examples and architectural patterns for integrating Gem
 
 The general process for an automated MR review is as follows: A developer opens a Merge Request, which triggers a GitLab CI/CD pipeline. The pipeline executes a job that uses the Gemini CLI to analyze the code changes. The Gemini CLI, through a Model Context Protocol (MCP) server, interacts with the Gemini API to generate a review and then posts the findings as a comment back to the Merge Request.
 
+For this integration [unofficial GitLab MCP server](https://gitlab.com/fforster/gitlab-mcp) was used.
+
 ![High-Level Overview](option-1.png)
 
 ---
